@@ -415,14 +415,18 @@ func CreateModel(ctx context.Context, name, modelFileDir, quantization string, m
 							return err
 						}
 
-						f16digest := baseLayer.Layer.Digest
-
-						baseLayer.Layer, err = NewLayer(temp, baseLayer.Layer.MediaType)
+						layers, err := parseFromFile(ctx, temp, "", fn)
 						if err != nil {
 							return err
 						}
 
-						intermediateBlobs.Store(f16digest, baseLayer.Layer.Digest)
+						if len(layers) != 1 {
+							return errors.New("quantization failed")
+						}
+
+						intermediateBlobs.Store(baseLayer.Layer.Digest, layers[0].Layer.Digest)
+						baseLayer.Layer = layers[0].Layer
+						baseLayer.GGML = layers[0].GGML
 					}
 				}
 
