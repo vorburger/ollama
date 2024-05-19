@@ -1,6 +1,6 @@
 # `llama`
 
-This package integrates llama.cpp a Go package.
+This package integrates llama.cpp as a Go package that's easy to build with tags for different CPU and GPU processors.
 
 - [x] CPU
 - [x] avx, avx2
@@ -16,7 +16,7 @@ Extra build steps are required for CUDA and ROCm on Windows since `nvcc` and `hi
 - `ggml-cuda.dll`
 - `ggml-hipblas.dll`
 
-> Note: it's important that memory is allocated and freed by the same compiler (e.g. msvc or mingw code). Issues from this should be rare, but there are some places where pointers are returned by the CUDA or HIP runtimes and freed elsewhere, causing a a crash. In a future change the same runtime should be used in both cases to avoid crashes.
+> Note: it's important that memory is allocated and freed by the same compiler (e.g. entirely by code compiled with msvc or mingw). Issues from this should be rare, but there are some places where pointers are returned by the CUDA or HIP runtimes and freed elsewhere, causing a a crash. In a future change the same runtime should be used in both cases to avoid crashes.
 
 ## Building
 
@@ -44,12 +44,13 @@ go build -tags=avx2 .
 
 Install the [CUDA toolkit v11.3.1](https://developer.nvidia.com/cuda-11-3-1-download-archive) then build ggml-cuda:
 
+Build `ggml-cuda.dll`:
+
 ```shell
-# builds ggml-cuda.dll
 ./cuda.sh
 ```
 
-Then build this package with the `cuda` tag:
+Then build the package with the `cuda` tag:
 
 ```shell
 go build -tags=cuda .
@@ -57,16 +58,23 @@ go build -tags=cuda .
 
 ### ROCm
 
+Install [ROCm 5.7.1](https://rocm.docs.amd.com/en/docs-5.7.1/) and [Strawberry Perl](https://strawberryperl.com/):
+
+Build `ggml-hipblas.dll`:
+
 ```shell
-# builds ggml-hipblas.dll
 ./hipblas.sh
 ```
+
+Then build the package with the `rocm` tag:
 
 ```shell
 go build -tags=rocm .
 ```
 
 ## Syncing with llama.cpp
+
+To update this package to the latest llama.cpp code, use the `sync.sh` script.
 
 ```
 ./sync.sh ../../llama.cpp
